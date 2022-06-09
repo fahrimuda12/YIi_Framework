@@ -3,6 +3,8 @@
 namespace backend\models;
 
 use Yii;
+use yii\web\UploadedFile;
+
 
 /**
  * @author Ranidya
@@ -17,6 +19,7 @@ use Yii;
  */
 class Item extends \yii\db\ActiveRecord
 {
+    public $file1;
     /**
      * {@inheritdoc}
      */
@@ -35,6 +38,8 @@ class Item extends \yii\db\ActiveRecord
             [['price', 'category_id'], 'integer'],
             [['name'], 'string', 'max' => 255],
             [['category_id'], 'exist', 'skipOnError' => true, 'targetClass' => ItemCategory::className(), 'targetAttribute' => ['category_id' => 'id']],
+            [['file1'], 'file', 'extensions' => 'gif,jpg'],
+
         ];
     }
 
