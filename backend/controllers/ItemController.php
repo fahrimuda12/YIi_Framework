@@ -8,6 +8,8 @@ use backend\models\Statistic;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use app\models\UploadForm;
+use yii\web\UploadedFile;
 
 /**
  * ItemController implements the CRUD actions for Item model.
@@ -40,7 +42,7 @@ class ItemController extends Controller
     public function actionIndex()
     {
         $model = new Statistic();
-    
+
         $model->access_time = date("Y-m-d H:i:s");
         $model->user_ip = \Yii::$app->request->userIP;
         $model->user_host = \Yii::$app->request->getHostInfo();
@@ -66,7 +68,7 @@ class ItemController extends Controller
     public function actionView($id)
     {
         $model = new Statistic();
-    
+
         $model->access_time = date("Y-m-d H:i:s");
         $model->user_ip = \Yii::$app->request->userIP;
         $model->user_host = \Yii::$app->request->getHostInfo();
@@ -89,6 +91,13 @@ class ItemController extends Controller
         $model = new Item();
 
         if ($this->request->isPost) {
+            $model->file1 = UploadedFile::getInstance(
+                $model,
+                'file1'
+            );
+            if ($model->file1 && $model->validate()) {
+                $model->file1->saveAs('uploads/' . $model->file1->baseName . '.' . $model->file1->extension);
+            }
             if ($model->load($this->request->post()) && $model->save()) {
                 return $this->redirect(['view', 'id' => $model->id]);
             }
