@@ -1,5 +1,6 @@
 <?php
 
+use yii\helpers\Url;
 use yii\helpers\Html;
 use yii\widgets\DetailView;
 
@@ -33,6 +34,13 @@ $this->params['breadcrumbs'][] = $this->title;
             'name',
             'price',
             'category_id',
+            [
+                'label' => 'Gambar',
+                'format' => 'html',
+                'value' => function ($data) {
+                    return "<img width='104px' src='" . Url::to(['item/view-gambar', 'nama' => $data->gambar]) . "'>";
+                }
+            ],
         ],
     ]) ?>
 

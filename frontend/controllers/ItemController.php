@@ -137,6 +137,11 @@ class ItemController extends Controller
 
         throw new NotFoundHttpException('The requested page does not exist.');
     }
+    public function actionViewGambar($nama)
+    {
+        $file = Yii::getAlias('@backend/web/img/' . $nama);
+        return YIi::$app->response->sendFile($file, NULL, ['inline' => true]);
+    }
 
     // public function statistics()
     // {

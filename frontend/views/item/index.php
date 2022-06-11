@@ -18,7 +18,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <h1><?= Html::encode($this->title) ?></h1>
 
     <p>
-        <?= Html::a('Create Item', ['create'], ['class' => 'btn btn-success']) ?>
+        <!-- <?= Html::a('Create Item', ['create'], ['class' => 'btn btn-success']) ?> -->
     </p>
 
     <?php // echo $this->render('_search', ['model' => $searchModel]); 
@@ -35,11 +35,21 @@ $this->params['breadcrumbs'][] = $this->title;
             'price',
             'category_id',
             [
+                'class' => 'yii\grid\DataColumn',
+                'header' => 'Gambar',
+                'format' => 'raw',
+                'value' => function ($data) {
+                    return "<img width='104px' src='" . Url::to(['item/view-gambar', 'nama' => $data->gambar]) . "'>";
+                }
+            ],
+            [
+                'header' => 'Detail',
                 'class' => ActionColumn::className(),
                 'urlCreator' => function ($action, Item $model, $key, $index, $column) {
                     return Url::toRoute([$action, 'id' => $model->id]);
                 }
             ],
+
         ],
     ]); ?>
 
