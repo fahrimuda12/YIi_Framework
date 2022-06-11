@@ -47,6 +47,7 @@ class Item extends \yii\db\ActiveRecord
             [['name'], 'string', 'max' => 255],
             [['id'], 'unique'],
             [['category_id'], 'exist', 'skipOnError' => true, 'targetClass' => ItemCategory::className(), 'targetAttribute' => ['category_id' => 'id']],
+            [['gambar'], 'file', 'skipOnEmpty' => true, 'extensions' => 'gif,jpg'],
         ];
     }
 
@@ -60,6 +61,7 @@ class Item extends \yii\db\ActiveRecord
             'name' => 'Name',
             'price' => 'Price',
             'category_id' => 'Category ID',
+            'gambar' => 'Gambar',
         ];
     }
 

@@ -2,14 +2,15 @@
 
 namespace backend\controllers;
 
-use backend\models\Item;
-use backend\models\ItemSearch;
-use backend\models\Statistic;
+use Yii;
 use yii\web\Controller;
-use yii\web\NotFoundHttpException;
-use yii\filters\VerbFilter;
-use app\models\UploadForm;
+use backend\models\Item;
 use yii\web\UploadedFile;
+use app\models\UploadForm;
+use yii\filters\VerbFilter;
+use backend\models\Statistic;
+use backend\models\ItemSearch;
+use yii\web\NotFoundHttpException;
 
 /**
  * ItemController implements the CRUD actions for Item model.
@@ -90,20 +91,25 @@ class ItemController extends Controller
     {
         $model = new Item();
 
-        if ($this->request->isPost) {
-            $model->file1 = UploadedFile::getInstance(
-                $model,
-                'file1'
-            );
-            if ($model->file1 && $model->validate()) {
-                $model->file1->saveAs('uploads/' . $model->file1->baseName . '.' . $model->file1->extension);
+        if ($model->load(Yii::$app->request->post())) {
+            $gambar = UploadedFile::getInstance($model, 'gambar');
+            if ($model->validate()) {
+                $model->save();
+                if (!empty($gambar)) {
+                    $image_new = $model->id . '-' . $gambar->baseName;
+                    $gambar->saveAs(Yii::getAlias('@backend/web/img/') . $image_new . '.' . $gambar->extension);
+                    $model->gambar = $image_new . '.' . $gambar->extension;
+                    $model->save(FALSE);
+                }
             }
-            if ($model->load($this->request->post()) && $model->save()) {
-                return $this->redirect(['view', 'id' => $model->id]);
-            }
-        } else {
-            $model->loadDefaultValues();
+            $model->save();
+            return $this->redirect(['view', 'id' => $model->id]);
         }
+
+
+        // if ($model->load($this->request->post()) && $model->save()) {
+        //     return $this->redirect(['view', 'id' => $model->id]);
+        // }
 
         return $this->render('create', [
             'model' => $model,
@@ -120,10 +126,27 @@ class ItemController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
-
-        if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
+        $iamge_name = $model->gambar;
+        if ($model->load(Yii::$app->request->post())) {
+            $gambar = UploadedFile::getInstance($model, 'gambar');
+            if ($model->validate()) {
+                $model->save();
+                if (!empty($gambar)) {
+                    $image_new = $model->id . '-' . $gambar->baseName;
+                    $gambar->saveAs(Yii::getAlias('@backend/web/img/') . $image_new . '.' . $gambar->extension);
+                    $model->gambar = $image_new . '.' . $gambar->extension;
+                } else {
+                    $model->gambar = $iamge_name;
+                }
+                $model->save();
+            }
+            $model->save();
             return $this->redirect(['view', 'id' => $model->id]);
         }
+
+        // if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
+        //     return $this->redirect(['view', 'id' => $model->id]);
+        // }
 
         return $this->render('update', [
             'model' => $model,
@@ -158,5 +181,11 @@ class ItemController extends Controller
         }
 
         throw new NotFoundHttpException('The requested page does not exist.');
+    }
+
+    public function actionViewGambar($nama)
+    {
+        $file = Yii::getAlias('@backend/web/img/' . $nama);
+        return YIi::$app->response->sendFile($file, NULL, ['inline' => true]);
     }
 }

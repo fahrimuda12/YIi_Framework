@@ -2,9 +2,7 @@
 
 use yii\helpers\Html;
 use yii\widgets\DetailView;
-/* @author Ranidya */
-/* @var $this yii\web\View */
-/* @var $model backend\models\Item */
+use yii\helpers\Url;
 
 $this->title = $model->name;
 $this->params['breadcrumbs'][] = ['label' => 'Items', 'url' => ['index']];
@@ -33,6 +31,13 @@ $this->params['breadcrumbs'][] = $this->title;
             'name',
             'price',
             'category_id',
+            [
+                'label' => 'Gambar',
+                'format' => 'html',
+                'value' => function ($data) {
+                    return "<img width='104px' src='" . Url::to(['item/view-gambar', 'nama' => $data->gambar]) . "'>";
+                }
+            ],
         ],
     ]) ?>
 

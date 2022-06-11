@@ -10,7 +10,7 @@ use yii\widgets\ActiveForm;
 
 <div class="item-form">
 
-    <?php $form = ActiveForm::begin(); ?>
+    <?php $form = ActiveForm::begin(['options' => ['class' => 'form-horizontal', 'enctype' => 'multipart/form-data']]); ?>
 
     <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
 
@@ -18,6 +18,7 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'category_id')->textInput() ?>
 
+    <?= $form->field($model, 'gambar')->fileInput() ?>
     <div class="form-group">
         <?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?>
     </div>
