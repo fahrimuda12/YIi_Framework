@@ -3,9 +3,12 @@
 namespace frontend\controllers;
 
 use Yii;
+use yii\db\Query;
+use common\models\User;
 use yii\web\Controller;
 use yii\data\Pagination;
 use frontend\models\Item;
+use yii\filters\HttpCache;
 use yii\filters\VerbFilter;
 use common\models\LoginForm;
 use yii\filters\AccessControl;
@@ -30,26 +33,40 @@ class SiteController extends Controller
     {
         return [
             'access' => [
-                'class' => AccessControl::className(),
+                'class' => HttpCache::className(),
+                // 'class' => AccessControl::className(),
                 'only' => ['logout', 'signup'],
-                'rules' => [
-                    [
-                        'actions' => ['signup'],
-                        'allow' => true,
-                        'roles' => ['?'],
-                    ],
-                    [
-                        'actions' => ['logout'],
-                        'allow' => true,
-                        'roles' => ['@'],
-                    ],
-                ],
+                'lastModified' => function ($action, $params) {
+                    $query = new Query();
+                    return $query->form('item')->max('created_at');
+                },
+                'etagSeed' => function ($action, $params) {
+                    $user = $this->findModel(Yii::$app->request->get('id'));
+                    return serialize([$user->name, $user->email]);
+                }
+                // 'rules' => [
+                //     [
+                //         'actions' => ['signup'],
+                //         'allow' => true,
+                //         'roles' => ['?'],
+                //     ],
+                //     [
+                //         'actions' => ['logout'],
+                //         'allow' => true,
+                //         'roles' => ['@'],
+                //     ],
+                // ],
             ],
             'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [
                     'logout' => ['post'],
                 ],
+            ],
+            [
+                'class' => 'yii\filters\PageCache',
+                'only' => ['index'],
+                'duration' => 30,
             ],
         ];
     }
@@ -86,9 +103,14 @@ class SiteController extends Controller
         $model = $query->offset($pagination->offset)
             ->limit($pagination->limit)
             ->all();
+        $dataCache = Yii::$app->cache->set('username', isset(Yii::$app->user->identity->username) ? Yii::$app->user->identity->username : "");
+        $dataCache = Yii::$app->cache->get('username');
+
+
         return $this->render('index', [
             'models' => $model,
-            'pagination' => $pagination
+            'pagination' => $pagination,
+            'cache' => $dataCache
         ]);
         // return $this->render('index');
     }
@@ -270,5 +292,15 @@ class SiteController extends Controller
         return $this->render('resendVerificationEmail', [
             'model' => $model
         ]);
+    }
+
+    public function actionFragmentCaching()
+    {
+        $user = new User();
+        $user->username = "Test Cache Username";
+        $user->email = "testcache@gmail.com ";
+        $user->save();
+        $models = User::find()->all();
+        return $this->render('cachedview', ['models' => $models]);
     }
 }

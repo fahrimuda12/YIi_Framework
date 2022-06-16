@@ -18,11 +18,9 @@ $this->title = 'Segeer';
     <div class="jumbotron text-center bg-transparent">
         <h1 class="display-4"><?= Html::encode($this->title) ?></h1>
 
-        <p class="lead">Selamat datang</p>
-
+        <p class="lead">Selamat datang <?= $cache ?></p>
         <!-- <p><a class="btn btn-lg btn-success" href="http://www.yiiframework.com">Get started with Yii</a></p> -->
     </div>
-
     <?php $form = ActiveForm::begin(['action' => ['site/index'], 'options' => ['method' => 'post']]); ?>
     <center>
         <select name="category">
