@@ -17,6 +17,7 @@ use yii\helpers\Url;
    </h2>
    <div class="item-detail">
       <b><?= Html::encode('Rp. ' . $model->price); ?></b>
+      <p>Category : <?= $model->category->name; ?></p>
       <?php if (!Yii::$app->user->isGuest) : ?>
          <?= Html::a('Buy', ['item/view', 'id' => $model->id], ['class' => 'btn btn-success']) ?>
       <?php else : ?>

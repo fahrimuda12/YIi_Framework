@@ -2,19 +2,21 @@
 
 namespace frontend\controllers;
 
-use frontend\models\ResendVerificationEmailForm;
-use frontend\models\VerifyEmailForm;
 use Yii;
-use yii\base\InvalidArgumentException;
-use yii\web\BadRequestHttpException;
 use yii\web\Controller;
+use yii\data\Pagination;
+use frontend\models\Item;
 use yii\filters\VerbFilter;
-use yii\filters\AccessControl;
 use common\models\LoginForm;
-use frontend\models\PasswordResetRequestForm;
-use frontend\models\ResetPasswordForm;
+use yii\filters\AccessControl;
 use frontend\models\SignupForm;
 use frontend\models\ContactForm;
+use frontend\models\VerifyEmailForm;
+use yii\web\BadRequestHttpException;
+use frontend\models\ResetPasswordForm;
+use yii\base\InvalidArgumentException;
+use frontend\models\PasswordResetRequestForm;
+use frontend\models\ResendVerificationEmailForm;
 
 /**
  * Site controller
@@ -75,7 +77,20 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
-        return $this->render('index');
+        $query = Item::find();
+        if (isset($_POST['category']) && !empty($_POST['category']) && $_POST['category'] != 0) {
+            $query->andWhere(['=', 'category_id', $_POST['category']]);
+        }
+        $count = $query->count();
+        $pagination = new Pagination(['totalCount' => $count, 'defaultPageSize' => 5]);
+        $model = $query->offset($pagination->offset)
+            ->limit($pagination->limit)
+            ->all();
+        return $this->render('index', [
+            'models' => $model,
+            'pagination' => $pagination
+        ]);
+        // return $this->render('index');
     }
 
     /**
