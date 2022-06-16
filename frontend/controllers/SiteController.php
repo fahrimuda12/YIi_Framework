@@ -82,7 +82,7 @@ class SiteController extends Controller
             $query->andWhere(['=', 'category_id', $_POST['category']]);
         }
         $count = $query->count();
-        $pagination = new Pagination(['totalCount' => $count, 'defaultPageSize' => 5]);
+        $pagination = new Pagination(['totalCount' => $count, 'defaultPageSize' => 6]);
         $model = $query->offset($pagination->offset)
             ->limit($pagination->limit)
             ->all();
