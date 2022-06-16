@@ -5,7 +5,7 @@ use yii\helpers\Url;
 ?>
 <article class="item" data-key="<?= $model->id ?>">
    <?=
-   "<img width='30%' src='" . Url::to(['item/view-gambar', 'nama' => $model->gambar]) . "'>"
+   "<img width='80%' src='" . Url::to(['item/view-gambar', 'nama' => $model->gambar]) . "'>"
    ?>
    <h2 class="title">
       <?= Html::a(
