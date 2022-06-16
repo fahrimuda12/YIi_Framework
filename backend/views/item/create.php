@@ -2,10 +2,15 @@
 
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
+use yii\helpers\ArrayHelper;
+use backend\models\ItemCategory;
+
 
 $this->title = 'Create Item';
 $this->params['breadcrumbs'][] = ['label' => 'Items', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
+
+$listData = ArrayHelper::map(ItemCategory::find()->all(), 'id', 'name');
 ?>
 
 <div class="item-create">
@@ -15,7 +20,10 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <?= $form->field($model, 'name')->textInput()->hint('Please enter your name')->label('Name') ?>
     <?= $form->field($model, 'price')->textInput()->hint('Please enter your price')->label('Price') ?>
-    <?= $form->field($model, 'category_id')->input('number')->label('Category ID') ?>
+    <?= $form->field($model, 'category_id')->dropDownList(
+        $listData,
+        ['prompt' => 'Select...']
+    )->hint('Please select category')->label('Category'); ?>
     <?= $form->field($model, 'gambar')->fileInput() ?>
     <div class="form-group">
         <?= Html::submitButton('Submit', [
